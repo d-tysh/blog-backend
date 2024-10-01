@@ -9,7 +9,6 @@ const app = express();
 app.use(logger('tiny'));
 app.use(express.json());
 app.use(cors());
-app.use(express.static('public'));
 
 const usersRouter = require('./api/users');
 const newsRouter = require('./api/news');
@@ -18,17 +17,17 @@ app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
 
 app.use((_, res, __) => {
-    res.status(404).json({
+    return res.status(404).json({
         status: 'error',
         code: 404,
-        message: 'Use api on routes: /api/users, /api/news',
+        message: 'Use api on routes: /api/news',
         data: 'Not Found'
     })
 })
 
 app.use((error, _, res, __) => {
     const { status = 500, message } = error;
-    res.status(status).json({ status, message })
+    return res.status(status).json({ status, message });
 })
 
 const { PORT = 3000, DB_HOST } = process.env;
