@@ -8,7 +8,7 @@ router
     .get('/', controllerWrapper(ctrlNews.get))
     .get('/:id', controllerWrapper(ctrlNews.getById))
     .post('/', authenticate, controllerWrapper(ctrlNews.create))
-    .put('/:id', authenticate, controllerWrapper(ctrlNews.update))
+    .patch('/:id', authenticate, controllerWrapper(ctrlNews.update))
     .delete('/:id', authenticate, controllerWrapper(ctrlNews.remove));
 
 module.exports = router;

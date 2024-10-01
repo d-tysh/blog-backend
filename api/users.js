@@ -11,7 +11,7 @@ router
     .get('/current', authenticate, controllerWrapper(ctrlUsers.getCurrent))
     .get('/', authenticate, controllerWrapper(ctrlUsers.getAllUsers))
     .get('/:id', authenticate, controllerWrapper(ctrlUsers.getUserByid))
-    .put('/:id', authenticate, controllerWrapper(ctrlUsers.update))
+    .patch('/:id', authenticate, controllerWrapper(ctrlUsers.update))
     .delete('/:id', authenticate, controllerWrapper(ctrlUsers.remove));
 
 module.exports = router;
