@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Joi = require('joi');
 
 const user = new Schema(
     {
@@ -21,9 +22,6 @@ const user = new Schema(
             enum: ['admin', 'user'],
             default: 'user'
         },
-        // avatarURL: {
-        //     type: String
-        // },
         token: {
             type: String,
             default: ''
@@ -32,5 +30,21 @@ const user = new Schema(
     { versionKey: false }
 )
 
+const userRegisterSchema = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    password: Joi.string().min(6).required()
+})
+
+const userLoginSchema = Joi.object({
+    email: Joi.string().required(),
+    password: Joi.string().min(6).required()
+})
+
 const User = mongoose.model('user', user);
-module.exports = User;
+
+module.exports = {
+    User,
+    userRegisterSchema,
+    userLoginSchema
+};
