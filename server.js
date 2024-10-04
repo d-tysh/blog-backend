@@ -8,11 +8,11 @@ import newsRouter from './api/news.js';
 
 const app = express();
 
-const ALLOWED_URLS = process.env.ALLOWED_URLS ? process.env.ALLOWED_URLS.split(',') : '*';
+const ALLOWED_URLS = process.env.ALLOWED_URLS.split(',');
 
 const corsOptions = {
     origin: (origin, callback) => {
-        if (ALLOWED_URLS.includes(origin) || ALLOWED_URLS === '*') {
+        if (ALLOWED_URLS.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
