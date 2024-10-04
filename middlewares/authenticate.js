@@ -1,9 +1,10 @@
-const jwt = require('jsonwebtoken');
-const User = require('../service/schemas/user');
-const { SECRET_KEY } = process.env;
-const HttpError = require('../helpers/HttpError');
+import jwt from 'jsonwebtoken';
+import { User } from '../service/schemas/user.js';
+import HttpError from '../helpers/HttpError.js';
 
-const autehticate = async (req, _, next) => {
+const { SECRET_KEY } = process.env;
+
+const authenticate = async (req, _, next) => {
     const { authorization = '' } = req.headers;
     const [bearer, token] = authorization.split(' ');
 
@@ -24,4 +25,4 @@ const autehticate = async (req, _, next) => {
     }
 }
 
-module.exports = autehticate;
+export default authenticate;

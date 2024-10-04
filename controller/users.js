@@ -1,24 +1,17 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { User, userRegisterSchema, userLoginSchema } = require('../service/schemas/user');
-const successResponse = require('../helpers/successResponse');
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { User, userRegisterSchema, userLoginSchema } from '../service/schemas/user.js';
+import successResponse from '../helpers/successResponse.js';
+import validateBody from '../helpers/validateBody.js';
 
 const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
-    const { error } = userRegisterSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({
-            status: 'error',
-            code: 400,
-            message: 'Bad Request',
-            error: error.details
-        })
-    }
+    validateBody(userRegisterSchema);
 
     const { email } = req.body;
     const user = await User.findOne({ email });
-    
+
     if (user) {
         return res.status(409).json({
             status: 'error',
@@ -37,15 +30,7 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    const { error } = userLoginSchema.validate(req.body);
-    if (error) {
-        return res.status(400).json({
-            status: 'error',
-            code: 400,
-            message: 'Bad Request',
-            error: error.details
-        })
-    }
+    validateBody(userLoginSchema);
 
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -164,7 +149,7 @@ const remove = async (req, res) => {
     })
 }
 
-module.exports = {
+export default {
     register,
     login,
     logout,
@@ -173,4 +158,4 @@ module.exports = {
     getUserByid,
     update,
     remove
-}
+};

@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import ctrlUsers from '../controller/users.js';
+import authenticate from '../middlewares/authenticate.js';
+import controllerWrapper from '../decorators/controllerWrapper.js';
+
 const router = express.Router();
-const ctrlUsers = require('../controller/users');
-const authenticate = require('../middlewares/authenticate');
-const controllerWrapper = require('../decorators/controllerWrapper');
 
 router
     .post('/login', controllerWrapper(ctrlUsers.login))
@@ -14,4 +15,4 @@ router
     .patch('/:id', authenticate, controllerWrapper(ctrlUsers.update))
     .delete('/:id', authenticate, controllerWrapper(ctrlUsers.remove));
 
-module.exports = router;
+export default router;

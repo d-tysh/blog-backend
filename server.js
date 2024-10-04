@@ -1,17 +1,16 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const logger = require('morgan');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import logger from 'morgan';
+import 'dotenv/config';
+import usersRouter from './api/users.js';
+import newsRouter from './api/news.js';
 
 const app = express();
 
 app.use(logger('tiny'));
 app.use(express.json());
 app.use(cors());
-
-const usersRouter = require('./api/users');
-const newsRouter = require('./api/news');
 
 app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
@@ -32,9 +31,8 @@ app.use((error, _, res, __) => {
 
 const { PORT = 3000, DB_HOST } = process.env;
 
-const connection = mongoose.connect(DB_HOST);
-
-connection
+mongoose
+    .connect(DB_HOST)
     .then(() => {
         app.listen(PORT, () => {
             console.log('Database connection successful');

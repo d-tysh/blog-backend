@@ -1,5 +1,5 @@
-const News = require('../service/schemas/news');
-const successResponse = require('../helpers/successResponse');
+import News from '../service/schemas/news.js';
+import successResponse from '../helpers/successResponse.js';
 
 const get = async (req, res) => {
     const { page, limit } = req.query;
@@ -73,10 +73,10 @@ const remove = async (req, res,) => {
     })
 }
 
-module.exports = {
+export default {
     get,
     getById,
     create,
     update,
     remove
-}
+};
