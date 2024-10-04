@@ -32,14 +32,20 @@ const user = new Schema(
 )
 
 export const userRegisterSchema = Joi.object({
-    name: Joi.string().required(),
-    email: Joi.string().required(),
+    name: Joi.string().min(2).required(),
+    email: Joi.string().email().required(),
     password: Joi.string().min(6).required()
 })
 
 export const userLoginSchema = Joi.object({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
     password: Joi.string().min(6).required()
+})
+
+export const userUpdateSchema = Joi.object({
+    name: Joi.string().min(2).required(),
+    email: Joi.string().email().required(),
+    role: Joi.string().required()
 })
 
 export const User = mongoose.model('user', user);

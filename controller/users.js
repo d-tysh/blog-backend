@@ -1,14 +1,12 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { User, userRegisterSchema, userLoginSchema } from '../service/schemas/user.js';
+import { User, userRegisterSchema, userLoginSchema, userUpdateSchema } from '../service/schemas/user.js';
 import successResponse from '../helpers/successResponse.js';
-import validateBody from '../helpers/validateBody.js';
+import validateBody from '../middlewares/validateBody.js';
 
 const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
-    validateBody(userRegisterSchema);
-
     const { email } = req.body;
     const user = await User.findOne({ email });
 
@@ -30,8 +28,6 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
-    validateBody(userLoginSchema);
-
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
