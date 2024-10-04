@@ -8,9 +8,22 @@ import newsRouter from './api/news.js';
 
 const app = express();
 
+const ALLOWED_URLS = process.env.ALLOWED_URLS ? process.env.ALLOWED_URLS.split(',') : '*';
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        if (ALLOWED_URLS.includes(origin) || ALLOWED_URLS === '*') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+}
+
 app.use(logger('tiny'));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use('/api/users', usersRouter);
 app.use('/api/news', newsRouter);
