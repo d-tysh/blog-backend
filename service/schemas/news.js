@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Joi from 'joi';
 
 const Schema = mongoose.Schema;
 
@@ -23,14 +24,21 @@ const news = new Schema(
             unique: true,
             required: true
         },
-        createdAt: {
-            type: Date,
-            default: Date.now
-        }
     },
-    { versionKey: false }
+    { versionKey: false, timestamps: true }
 )
 
-const News = mongoose.model('news', news);
+export const newsCreateSchema = Joi.object({
+    title: Joi.string().min(5).required(),
+    date: Joi.string().required(),
+    content: Joi.string()
+})
 
-export default News;
+export const newsUpdateSchema = Joi.object({
+    title: Joi.string().min(5).required(),
+    date: Joi.string().required(),
+    url: Joi.string().min(5).required(),
+    content: Joi.string()
+})
+
+export const News = mongoose.model('news', news);

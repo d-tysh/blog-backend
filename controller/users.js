@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { User, userRegisterSchema, userLoginSchema, userUpdateSchema } from '../service/schemas/user.js';
+import { User } from '../service/schemas/user.js';
 import successResponse from '../helpers/successResponse.js';
-import validateBody from '../middlewares/validateBody.js';
 
 const { SECRET_KEY } = process.env;
 

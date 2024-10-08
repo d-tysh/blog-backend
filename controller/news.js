@@ -1,24 +1,27 @@
-import News from '../service/schemas/news.js';
+import { News } from '../service/schemas/news.js';
 import successResponse from '../helpers/successResponse.js';
+import HttpError from '../helpers/HttpError.js';
 
 const get = async (req, res) => {
     const { page, limit } = req.query;
     const skip = (page - 1) * limit;
     const totalCount = await News.countDocuments();
     const results = await News.find({}, null, { skip, limit }).populate('author', 'name').sort({ _id: -1 });
-    return successResponse(res, 200, {
+    const data = {
         totalCount,
         resultsCount: results.length,
         results
-    })
+    };
+    return successResponse(res, 200, data);
 }
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
     const { id } = req.params;
     const result = await News.findById(id).populate('author', 'name');
-    return successResponse(res, 200, {
-        result
-    })
+    if (!result) {
+        next(HttpError(404));
+    }
+    return successResponse(res, 200, { result });
 }
 
 const create = async (req, res) => {
@@ -30,47 +33,42 @@ const create = async (req, res) => {
         .toLowerCase();
 
     const result = await News.create({ ...req.body, author, url });
-    return successResponse(res, 201, {
+    const data = {
         status: 'success',
         code: 201,
         message: 'News added',
         result
-    })
+    };
+    return successResponse(res, 201, data);
 }
 
 const update = async (req, res) => {
     const { id } = req.params;
     const result = await News.findByIdAndUpdate({ _id: id }, req.body, { new: true });
     if (!result) {
-        return res.status(400).json({
-            status: 'error',
-            code: 400,
-            message: "You don't have permission to edit this post."
-        })
+        next(HttpError(404));
     }
-    return successResponse(res, 200, {
+    const data = {
         status: 'success',
         code: 200,
-        message: `News changed`,
+        message: 'News changed',
         result
-    })
+    };
+    return successResponse(res, 200, data);
 }
 
 const remove = async (req, res,) => {
     const { id } = req.params;
     const result = await News.findByIdAndDelete(id);
     if (!result) {
-        return res.status(404).json({
-            status: 'error',
-            code: 404,
-            message: 'Not Found'
-        })
+        next(HttpError(404));
     }
-    return successResponse(res, 200, {
+    const data = {
         status: 'success',
         code: 200,
         message: `Deleted news: ${result.title}`
-    })
+    };
+    return successResponse(res, 200, data);
 }
 
 export default {

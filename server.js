@@ -38,7 +38,7 @@ app.use((_, res, __) => {
 })
 
 app.use((error, _, res, __) => {
-    const { status = 500, message } = error;
+    const { status = 500, message = 'Internal Server Error' } = error;
     return res.status(status).json({ status, message });
 })
 
