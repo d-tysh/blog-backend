@@ -2,6 +2,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { User } from '../service/schemas/user.js';
 import successResponse from '../helpers/successResponse.js';
+import controllerWrapper from '../decorators/controllerWrapper.js';
+import mongoose from 'mongoose';
 
 const { SECRET_KEY } = process.env;
 
@@ -96,6 +98,16 @@ const getAllUsers = async (req, res) => {
 
 const getUserByid = async (req, res) => {
     const { id } = req.params;
+
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+    if (!isValidId) {
+        return res.status(400).json({
+            status: 'error',
+            code: 400,
+            message: 'Bad Request'
+        })
+    }
+
     const result = await User.findById(id, '-token -password');
     if (!result) {
         return res.status(404).json({
@@ -145,12 +157,12 @@ const remove = async (req, res) => {
 }
 
 export default {
-    register,
-    login,
-    logout,
-    getCurrent,
-    getAllUsers,
-    getUserByid,
-    update,
-    remove
+    register: controllerWrapper(register),
+    login: controllerWrapper(login),
+    logout: controllerWrapper(logout),
+    getCurrent: controllerWrapper(getCurrent),
+    getAllUsers: controllerWrapper(getAllUsers),
+    getUserByid: controllerWrapper(getUserByid),
+    update: controllerWrapper(update),
+    remove: controllerWrapper(remove)
 };

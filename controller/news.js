@@ -1,6 +1,8 @@
 import { News } from '../service/schemas/news.js';
 import successResponse from '../helpers/successResponse.js';
 import HttpError from '../helpers/HttpError.js';
+import controllerWrapper from '../decorators/controllerWrapper.js';
+import mongoose from 'mongoose';
 
 const get = async (req, res) => {
     const { page, limit } = req.query;
@@ -15,11 +17,17 @@ const get = async (req, res) => {
     return successResponse(res, 200, data);
 }
 
-const getById = async (req, res, next) => {
+const getById = async (req, res) => {
     const { id } = req.params;
+    
+    const isValidId = mongoose.Types.ObjectId.isValid(id);
+    if (!isValidId) {
+        throw HttpError(400);
+    }
+
     const result = await News.findById(id).populate('author', 'name');
     if (!result) {
-        next(HttpError(404));
+        throw HttpError(404);
     }
     return successResponse(res, 200, { result });
 }
@@ -72,9 +80,9 @@ const remove = async (req, res,) => {
 }
 
 export default {
-    get,
-    getById,
-    create,
-    update,
-    remove
+    get: controllerWrapper(get),
+    getById: controllerWrapper(getById),
+    create: controllerWrapper(create),
+    update: controllerWrapper(update),
+    remove: controllerWrapper(remove)
 };
