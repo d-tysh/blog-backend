@@ -4,6 +4,7 @@ import { User } from '../service/schemas/user.js';
 import successResponse from '../helpers/successResponse.js';
 import controllerWrapper from '../decorators/controllerWrapper.js';
 import mongoose from 'mongoose';
+import HttpError from '../helpers/HttpError.js';
 
 const { SECRET_KEY } = process.env;
 
@@ -12,20 +13,17 @@ const register = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user) {
-        return res.status(409).json({
-            status: 'error',
-            code: 409,
-            message: `User with email "${email}" already exists`
-        })
+        throw HttpError(409, `User with email "${email}" already exists`);
     }
 
     const password = await bcrypt.hash(req.body.password, 10);
     await User.create({ ...req.body, password });
-    return successResponse(res, 201, {
+    const data = {
         status: 'success',
         code: 201,
         message: `User "${email}" registered successfully`
-    })
+    }
+    return successResponse(res, 201, data);
 }
 
 const login = async (req, res) => {
@@ -33,20 +31,12 @@ const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-        return res.status(401).json({
-            status: 'error',
-            code: 401,
-            message: 'Email or password is incorrect'
-        })
+        throw HttpError(401, 'Email or password is incorrect');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({
-            status: 'error',
-            code: 401,
-            message: 'Email or password is incorrect'
-        })
+        throw HttpError(401, 'Email or password is incorrect');
     }
 
     const { _id: id } = user;
@@ -83,17 +73,11 @@ const getCurrent = async (req, res) => {
 const getAllUsers = async (req, res) => {
     const { user } = req;
     if (user.role !== 'admin') {
-        return res.status(403).json({
-            status: 'error',
-            code: 403,
-            message: 'Access Denied'
-        })
+        throw HttpError(403, 'Access Denied')
     }
 
     const results = await User.find({}, '-token -password');
-    return successResponse(res, 200, {
-        results
-    })
+    return successResponse(res, 200, { results })
 }
 
 const getUserByid = async (req, res) => {
@@ -101,55 +85,38 @@ const getUserByid = async (req, res) => {
 
     const isValidId = mongoose.Types.ObjectId.isValid(id);
     if (!isValidId) {
-        return res.status(400).json({
-            status: 'error',
-            code: 400,
-            message: 'Bad Request'
-        })
+        throw HttpError(400);
     }
 
     const result = await User.findById(id, '-token -password');
     if (!result) {
-        return res.status(404).json({
-            status: 'error',
-            code: 404,
-            message: 'User not found'
-        })
+        throw HttpError(404, 'User not found');
     }
-    return successResponse(res, 200, {
-        result
-    })
+    return successResponse(res, 200, { result })
 }
 
 const update = async (req, res) => {
     const { id } = req.params;
     const result = await User.findByIdAndUpdate(id, req.body, { new: true });
     if (!result) {
-        return res.status(404).json({
-            status: 'error',
-            code: 404,
-            message: "Not Found"
-        })
+        throw HttpError(404);
     }
-    return successResponse(res, 200, {
+    const data = {
         message: `User "${result.email}" updated`,
         result: {
             name: result.name,
             email: result.email,
             role: result.role
         }
-    })
+    }
+    return successResponse(res, 200, data);
 }
 
 const remove = async (req, res) => {
     const { id } = req.params;
     const result = await User.findByIdAndDelete(id);
     if (!result) {
-        return res.status(404).json({
-            status: 'error',
-            code: 404,
-            message: 'Not Found'
-        })
+        throw HttpError(404);
     }
     return successResponse(res, 200, {
         message: `Deleted user: ${result.email}`
