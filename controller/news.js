@@ -1,6 +1,7 @@
 import { News } from '../service/schemas/news.js';
 import successResponse from '../helpers/successResponse.js';
 import HttpError from '../helpers/HttpError.js';
+import createUniqueURL from '../helpers/createUniqueURL.js';
 import controllerWrapper from '../decorators/controllerWrapper.js';
 import mongoose from 'mongoose';
 
@@ -34,11 +35,9 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
     const { _id: author } = req.user;
-    let url = req.body.title
-        .replace(/[^a-zA-Z\s]/g, '')
-        .trim()
-        .replace(/\s+/g, '-')
-        .toLowerCase();
+    const { title } = req.body;
+
+    const url = await createUniqueURL(News, title);
 
     const result = await News.create({ ...req.body, author, url });
     const data = {
@@ -52,6 +51,13 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     const { id } = req.params;
+    const { url } = req.body;
+    
+    const isUrlExist = await News.findOne({ url });
+    if (isUrlExist && !isUrlExist._id.equals(id)) {
+        throw HttpError(409, 'News with this URL already exist');
+    }
+
     const result = await News.findByIdAndUpdate({ _id: id }, req.body, { new: true });
     if (!result) {
         next(HttpError(404));
