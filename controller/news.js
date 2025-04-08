@@ -60,7 +60,7 @@ const update = async (req, res) => {
 
     const result = await News.findByIdAndUpdate({ _id: id }, req.body, { new: true });
     if (!result) {
-        next(HttpError(404));
+        throw HttpError(404);
     }
     const data = {
         status: 'success',
@@ -75,7 +75,7 @@ const remove = async (req, res,) => {
     const { id } = req.params;
     const result = await News.findByIdAndDelete(id);
     if (!result) {
-        next(HttpError(404));
+        throw HttpError(404);
     }
     const data = {
         status: 'success',
