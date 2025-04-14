@@ -25,8 +25,6 @@ const createUniqueURL = async (Model, title) => {
 
 //     const newUrl = i > 0 ? `${url}-${i}` : url;
 //     const isUrlExist = await Model.findOne({ url: newUrl });
-    
-//     console.log(i);
 
 //     if (isUrlExist) {
 //         return await createUniqueURL(Model, title, i + 1);

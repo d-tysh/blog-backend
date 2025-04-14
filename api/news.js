@@ -8,7 +8,8 @@ const router = express.Router();
 
 router
     .get('/', ctrlNews.get)
-    .get('/:id', ctrlNews.getById)
+    .get('/id/:id', ctrlNews.getById)
+    .get('/:url', ctrlNews.getByURL)
     .post('/', authenticate, validateBody(newsCreateSchema), ctrlNews.create)
     .patch('/:id', authenticate, validateBody(newsUpdateSchema), ctrlNews.update)
     .delete('/:id', authenticate, ctrlNews.remove);

@@ -33,6 +33,15 @@ const getById = async (req, res) => {
     return successResponse(res, 200, { result });
 }
 
+const getByURL = async (req, res) => {
+    const { url } = req.params;
+    const result = await News.findOne({ url }).populate('author', 'name');
+    if (!result) {
+        throw HttpError(404);
+    }
+    return successResponse(res, 200, { result });
+}
+
 const create = async (req, res) => {
     const { _id: author } = req.user;
     const { title } = req.body;
@@ -88,6 +97,7 @@ const remove = async (req, res,) => {
 export default {
     get: controllerWrapper(get),
     getById: controllerWrapper(getById),
+    getByURL: controllerWrapper(getByURL),
     create: controllerWrapper(create),
     update: controllerWrapper(update),
     remove: controllerWrapper(remove)
