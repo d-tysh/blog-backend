@@ -26,6 +26,10 @@ const user = new Schema(
         token: {
             type: String,
             default: ''
+        },
+        isOnline: {
+            type: Boolean,
+            default: false
         }
     },
     { versionKey: false }

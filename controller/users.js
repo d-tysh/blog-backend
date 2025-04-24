@@ -42,31 +42,32 @@ const login = async (req, res) => {
     const { _id: id } = user;
     const payload = { id };
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1d' });
-    await User.findByIdAndUpdate(id, { token });
+    const result = await User.findByIdAndUpdate(id, { token, isOnline: true }, { new: true });
     return res.json({
         message: 'Authorized',
         data: {
             id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            token
+            name: result.name,
+            email: result.email,
+            role: result.role,
+            token,
+            isOnline: result.isOnline
         }
     })
 }
 
 const logout = async (req, res) => {
     const { _id: id } = req.user;
-    await User.findByIdAndUpdate(id, { token: '' });
+    await User.findByIdAndUpdate(id, { token: '', isOnline: false });
     successResponse(res, 200, {
         message: 'Logout successful'
     })
 }
 
 const getCurrent = async (req, res) => {
-    const { name, email, role, _id: id } = req.user;
+    const { name, email, role, _id: id, isOnline } = req.user;
     return successResponse(res, 200, {
-        data: { id, name, email, role }
+        data: { id, name, email, role, isOnline }
     })
 }
 
