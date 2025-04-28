@@ -24,6 +24,14 @@ const news = new Schema(
             unique: true,
             required: true
         },
+        comments: [
+            {
+                commentText: String,
+                commentDate: String,
+                authorName: String,
+                authorId: Schema.Types.ObjectId
+            }
+        ],
     },
     { versionKey: false, timestamps: true }
 )
