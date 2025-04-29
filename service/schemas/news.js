@@ -49,4 +49,11 @@ export const newsUpdateSchema = Joi.object({
     content: Joi.string()
 })
 
+export const addCommentSchema = Joi.object({
+    commentText: Joi.string().min(1).max(300).required(),
+    commentDate: Joi.string().required(),
+    authorName: Joi.string().required(),
+    authorId: Joi.string().required()
+})
+
 export const News = mongoose.model('news', news);
