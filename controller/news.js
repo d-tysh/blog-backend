@@ -80,7 +80,7 @@ const update = async (req, res) => {
     return successResponse(res, 200, data);
 }
 
-const remove = async (req, res,) => {
+const remove = async (req, res) => {
     const { id } = req.params;
     const result = await News.findByIdAndDelete(id);
     if (!result) {
@@ -94,11 +94,29 @@ const remove = async (req, res,) => {
     return successResponse(res, 200, data);
 }
 
+const addComment = async (req, res) => {
+    const { id } = req.params;
+    const result = await News.findByIdAndUpdate(id, {
+        $push: {
+            comments: {
+                ...req.body
+            }
+        }
+    }, { new: true });
+    if (!result) {
+        throw HttpError(404);
+    }
+    successResponse(res, 200, {
+        message: "Comment added"
+    })
+}
+
 export default {
     get: controllerWrapper(get),
     getById: controllerWrapper(getById),
     getByURL: controllerWrapper(getByURL),
     create: controllerWrapper(create),
     update: controllerWrapper(update),
-    remove: controllerWrapper(remove)
+    remove: controllerWrapper(remove),
+    addComment: controllerWrapper(addComment)
 };
