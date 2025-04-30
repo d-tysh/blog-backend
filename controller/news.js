@@ -111,6 +111,23 @@ const addComment = async (req, res) => {
     })
 }
 
+const removeComment = async (req, res) => {
+    const { id, commentId } = req.params;
+    const result = await News.findByIdAndUpdate(id, {
+        $pull: {
+            comments: {
+                _id: commentId
+            }
+        }
+    }, { new: true });
+    if (!result) {
+        throw HttpError(404);
+    }
+    successResponse(res, 200, {
+        message: "Comment deleted"
+    })
+}
+
 export default {
     get: controllerWrapper(get),
     getById: controllerWrapper(getById),
@@ -118,5 +135,6 @@ export default {
     create: controllerWrapper(create),
     update: controllerWrapper(update),
     remove: controllerWrapper(remove),
-    addComment: controllerWrapper(addComment)
+    addComment: controllerWrapper(addComment),
+    removeComment: controllerWrapper(removeComment)
 };

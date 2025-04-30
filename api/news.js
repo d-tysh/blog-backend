@@ -13,6 +13,7 @@ router
     .post('/', authenticate, validateBody(newsCreateSchema), ctrlNews.create)
     .patch('/:id', authenticate, validateBody(newsUpdateSchema), ctrlNews.update)
     .patch('/:id/comment', authenticate, validateBody(addCommentSchema), ctrlNews.addComment)
-    .delete('/:id', authenticate, ctrlNews.remove);
+    .delete('/:id', authenticate, ctrlNews.remove)
+    .delete('/:id/comment/:commentId', authenticate, ctrlNews.removeComment);
     
 export default router;
