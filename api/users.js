@@ -10,6 +10,7 @@ router
     .post('/login', validateBody(userLoginSchema), ctrlUsers.login)
     .post('/register', express.json(), validateBody(userRegisterSchema), ctrlUsers.register)
     .post('/logout', authenticate, ctrlUsers.logout)
+    .post('/status', express.text(), ctrlUsers.setOnlineStatus)
     .get('/current', authenticate, ctrlUsers.getCurrent)
     .get('/', authenticate, ctrlUsers.getAllUsers)
     .get('/:id', authenticate, ctrlUsers.getUserByid)

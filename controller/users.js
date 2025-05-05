@@ -71,6 +71,15 @@ const getCurrent = async (req, res) => {
     })
 }
 
+const setOnlineStatus = async (req, res) => {
+    const { id, isOnline } = JSON.parse(req.body);
+    const result = await User.findByIdAndUpdate(id, { isOnline }, { new: true });
+    if (!result) {
+        throw HttpError(404);
+    }
+    return res.status(200);
+}
+
 const getAllUsers = async (req, res) => {
     const { user } = req;
     if (user.role !== 'admin') {
@@ -132,5 +141,6 @@ export default {
     getAllUsers: controllerWrapper(getAllUsers),
     getUserByid: controllerWrapper(getUserByid),
     update: controllerWrapper(update),
-    remove: controllerWrapper(remove)
+    remove: controllerWrapper(remove),
+    setOnlineStatus: controllerWrapper(setOnlineStatus)
 };
